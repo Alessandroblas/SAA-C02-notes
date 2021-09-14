@@ -31,8 +31,8 @@ Finally, AWS has hundreds **Point of Presence** all around the world to provide 
 
 ## IAM Services
 
-IAM is a Global service providign Identity and Access Management. A root account is created by default for each Organization (AWS account), this should not be shared or even used. First thing to do is to create **Users** which are people within your organization. Users can be grouped together into different **groups** (eg: Developers, Operations, etc.). 
+IAM is a Global service providign Identity and Access Management. A root account is created by default for each Organization (AWS account), this should not be shared or even used. First thing to do is to create **Users** which are people within your organization. Users can be grouped together into different **groups** (eg: Developers, Operations, etc.).
 
 Users can belong to 0 (not a best practice) or multiple groups.
 
-We create Users and Groups to assign them permissions - you can attach them JSON documents called **IAM Policies**.
+You can create Users and Groups to assign them permissions - you can attach them JSON documents called **IAM Policies**.
