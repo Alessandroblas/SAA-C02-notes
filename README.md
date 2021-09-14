@@ -36,3 +36,4 @@ IAM is a Global service providign Identity and Access Management. A root account
 Users can belong to 0 (not a best practice) or multiple groups.
 
 You can create Users and Groups to assign them permissions - you can attach them JSON documents called **IAM Policies**.
+A
