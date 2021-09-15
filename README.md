@@ -4,7 +4,7 @@ Just some personal notes for the certification AWS SAA-C02
 
 ## Course Introduction
 
-Measured exams skills and syllabus here.
+Measured exams skills and syllabus [here](doc).
 
 Exams sample questions [here]().
 
