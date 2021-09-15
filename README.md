@@ -4,7 +4,7 @@ Just some personal notes for the certification AWS SAA-C02
 
 ## Course Introduction
 
-Measured exams skills and syllabus [here]().
+Measured exams skills and syllabus here.
 
 Exams sample questions [here]().
 
@@ -35,4 +35,9 @@ IAM is a Global service providign Identity and Access Management. A root account
 
 Users can belong to 0 (not a best practice) or multiple groups.
 
-You can create Users and Groups to assign them permissions - you can attach them JSON documents called **IAM Policies**.
+You can create Users and Groups to assign them permissions - attaching them JSON documents called **IAM Policies**. The suggested approach is to apply the **least privilege principle**: don't give more permissions than a user needs. Moreover, you should be aware that users inerhit all the permissions of their groups.
+
+You can find an example of IAM Policies in the picture below.
+
+![Alt text](img/iam-policies.png "IAM Policies")
+
