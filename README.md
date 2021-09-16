@@ -4,9 +4,9 @@ Just some personal notes for the certification AWS SAA-C02
 
 ## Course Introduction
 
-Measured exams skills and syllabus [here](doc).
+Measured exams skills and syllabus [here](doc/AWS-Certified-Solutions-Architect-Associate_Exam-Guide.pdf).
 
-Exams sample questions [here]().
+Exams sample questions [here](doc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf).
 
 ## AWS Infrastructure
 
