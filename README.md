@@ -154,7 +154,7 @@ You can encrypt an unencrypted EBS volume with taking a snapshot, then encrypt t
 ### Elastic File System (EFS)
 
 EFS is a managed NFSv4 (network file system) that provides a file system that can be mounted on many EC2 across multi-AZ. It is highly available, scalable but is more expensive than EBS. However, it is pay per use.
-You can attach a security group to an EFS instance and then **all linux based AMI (not Windows)** can access it. 
+You can attach a security group to an EFS instance and then **all linux based AMI (not Windows)** can access it.
 
 ### Amazon EC2 instance store
 
