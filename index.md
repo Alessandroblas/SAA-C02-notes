@@ -1,4 +1,6 @@
-# WORK IN PROGRESS! AWS Solutions Architect Associate Certification - SAA-C02
+**WORK IN PROGRESS!**
+
+# AWS Solutions Architect Associate Certification - SAA-C02
 
 Just some personal notes for the certification AWS SAA-C02
 
