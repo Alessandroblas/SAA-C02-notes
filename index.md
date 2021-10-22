@@ -167,3 +167,151 @@ The last option to attach storage to an EC2 instance is the [**Amazon EC2 instan
 [**Amazon Elastic Load Balancer (ELB)**](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-elb.html) is a load balancer that provides high availability and scalability. It is a network service that provides a stable, reliable, and scalable way to distribute traffic across multiple EC2 instances.
 
 [**Amazon Elastic Compute Cloud (EC2) Auto Scaling Groups (ASG)**](https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-asg.html) is a service that provides automatic scaling for Amazon EC2 instances.
+
+## Databases in AWS
+
+**Relational Database Service RDS** is a managed relational database service that provides high-performance, highly available, and scalable relational databases. It allows to create databases that are managed by AWS. It offers the following engines:
+
+- Postgre
+- MySQL
+- MariaDB
+- Oracle
+- Microsoft SQL Server
+- Aurora (AWS proprietary DB)
+
+RDS provides you:
+
+- Provisioning and OS patching
+- Continuous backups and Point in Time restore - daily full backup and transsaction logs are backed-up every 5 minutes (retention between 7 and 35 days)
+- DB Snapshot (different from bakcups, snapshots are triggered by the user and retention is arbitrary)
+- Monitoring dashboard
+- Read replicas for improved performance
+- Multi AZ setup for Disaster Recovery
+- scaling capabilities (vertical and horizontal)
+
+However you can not SSH the instance.
+
+### RDS Read Replicas
+
+In order to improve performance you can enable **RDS Read Replicas**. It allows you to create up to 5 read replicas of an RDS instance within AZ, Cross AZ or Cross Region. Replication is ASYN so reads are **eventually consistent**. You can promote replicas to their onw DB.
+
+Usually in AWS there is a network cost when data goes from one AZ to another but, for RDS Read Replicas **within the same region** you are not over charged. If you are using a cross region replicas you are charged for the transfer of data between the two regions.
+
+Note that applications must update the connection string to leverage read replicas.
+
+### RDS Multi AZ
+
+To provide disaster recovery you can use RDS Multi AZ. It allows you to create a single RDS instance in multiple AZs. This is useful when you need to provide high availability for your RDS instance. In this scenario RDS leverages a SYNC replication model. Using a single DNS name to access the RDS instance provide automatic app failover to standby.
+
+This is not intented for scaling as the standby instance are not accessible.
+
+### RDS Encryption
+
+You can enable at rest and in-flight encryption for RDS.
+
+At rest encryption has to be defined at launch time. Note **that if the master is not encrypted, the read replicas cannot be encrypted**. TDE available only for SQLs server and Oracle.
+
+Moreover, snapshots of (un-)encrypted RDS are (not) encrypted. You can copy an un-encrypted snapshot into an encrypted one and vice-versa. To encrypt an un-encrypted snapshot you need to create a new snapshot, copy the snapshot and enable encryption for the new snapshot, then restore the database from the snapsho and finally migrate applications to the new database.
+
+### RDS Security
+
+RDS databases are usually depolyed within a **private subnet**, not in a puclic one. You can use **security groups** to control access to the database.
+
+IAM helps to control who can manage AWS RDS.
+
+To sum up:
+
+Your responsibility in AWS RDS:
+
+- Check the ports / IP / security group inbound rules in DB’s SG
+- In-database user creation and permissions or manage through IAM
+- Creating a database with or without public access
+- Ensure parameter groups or DB is configured to only allow SSL connections
+
+AWS responsibility:
+
+- No SSH access
+- No manual DB patching
+- No manual OS patching
+- No way to audit the underlying instance
+
+### Amazon Aurora
+
+Aurora is a proprietary technology from AWS (not open sourced) but Postgres and MySQL are both supported as Aurora DB (that means your drivers will work as if Aurora was a Postgres or MySQL database). Aurora is **AWS cloud optimized** and claims **5x** performance improvement over MySQL on RDS, over **3x** the performance of Postgres on RDS. Aurora storage automatically grows in increments of 10GB, up to 64 TB.
+
+Aurora can have 15 replicas while MySQL has 5, and the replication process is faster (sub 10 ms replica lag). Failover in Aurora is instantaneous. It’s **HA native**. Aurora costs more than RDS (20% more) – but is more efficient. Aurora stores **6 copies** of your data across **3 AZs**:
+
+- 4 copies out of 6 needed for writes
+- 3 copies out of 6 needed for reads
+- Self healing with p2p replication
+- storage is striped across 100s of volumes
+- autoscaling
+
+Remember the picture below:
+
+![Alt text](img/AuroraHA.jpg "Aurora HA")
+
+At each point in time, Aurora has a primary and 1+ secondary. The primary is the primary copy of the data. The secondary is the copy that is used for reads. The primary is the only copy that is written to. You have a DNS name for writes on the primary and a different one (connection load balancing) for reads on the secondary.
+You can create custom endpoints pointing to a subset of the replicas.
+
+Aurora security is pretty the same of RDS.
+
+Aurora supports **Multi-Master** topology in case you want immediate failover for write node. Every node does RW instead promoting a RR (read replica) as the new master.
+
+### Amazon ElastiCache
+
+ElastiCache is a managed cache service that provides high-performance, high-capacity, and cost-effective caching for Memcached and Redis.
+Caches are in-memory databases with really high eprformance and low latency. It is  used to store data that is frequently accessed, but is not stored in a long-term consistent storage. It helps to make your applications stateless.
+
+AWS takes care of OS maintenance/patching, optimizations, setup, configuration, monitoring, failure recovery and backups.
+
+Main differences between RDS and ElastiCache important to know are the following.
+Redis:
+
+- Multi AZ with Auto-Failover
+- Read Replicas to scale reads and have high availability
+- Data Durability using AOF persistence
+- Backup and restore features
+
+Memcached:
+
+- Multi-node for partitioning of data (sharding)
+- No high availability (replication)
+- Non persistent
+- No backup and restore
+- Multi-threaded architecture
+
+### Amazon Route 53
+
+Amazon Route 53 is a 100% available, scalable, fully managed and **authoritative** DNS service. Route 53 is a domain registrar as well.
+
+See [official documentation](https://aws.amazon.com/it/route53/features/) for details
+
+### Amazon S3
+
+Amazon S3 allows you to store objects (files) in **buckets** (directories). Buckets must have a globally unique name and they are defined at the regional level.
+
+Each object have a key (name) and a value (content) is the **full path** to the file, eg: s3://my-bucket/myfile.txt. Object values are the content of the body. Object max size is **5TB** but to upload more than 5GB you must use the **multipart** upload feature. Each object can have metadata, tags and version ID (if enabled).
+
+Versioning is enabled at the **bucket level**. Enabling versioning is a best practice and it protects you against unintended deletes and provides you easy roll back to preovious versions. Note that any file not versioned prior to enabling versioning will have version `null`. Suspendind versioning on a bucket does not delete the previous ersions.
+
+S3 is **strong consisten**: after a successful write or an overwrite or delete operation any subsequent read or list request will return the latest version of the object.
+
+#### S3 Encryption
+
+There are 4 methods to encrypt objects in S3:
+
+- SSE-S3: Server Side Encryption with S3-Managed Keys - HTTP/HTTPS with header `x-amz-server-side-encryption:AES256`.
+- SSE-KMS: server side encryption with KMS  - HTTP/HTTPS with header `x-amz-server-side-encryption:aes:kms`.
+- SSE-C: server side encryption with customer keys not stored on AWS - only HTTPS is supported.
+- CSE: Client side encryption - client store encrypted data to S3 buckets, also decryption is client side. You can leverage AWS provided library to encrypt/decrypt data.
+
+SSE-S3 and SSE-KMS can be thinked as the following:
+
+![Alt text](img/SSEncryption.jpg "S3andKMS-encryption")
+
+and SSE-C as follows:
+
+![Alt text](img/SSCEncryption.jpg "SSEC-encryption").
+
+#### S3 Security and CORS
