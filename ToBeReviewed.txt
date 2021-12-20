@@ -2,3 +2,4 @@ Which RDS (NOT Aurora) feature when used does not require you to change the SQL 
 You would like to create a disaster recovery strategy for your RDS PostgreSQL database so that in case of a regional outage the database can be quickly made available for both read and write workloads in another AWS Region. The DR database must be highly available. What do you recommend?
 Which of the following statement is true regarding replication in both RDS Read Replicas and Multi-AZ?
 Which RDS database technology does NOT support IAM Database Authentication?
+EC2 billing 
